@@ -1,55 +1,39 @@
-# dsh-client-ui-aqua (optimized for dsh 0.1.2-rc.1)
+# dsh-client-ui-aqua · DeepSeek Harness 透明界面插件
 
-> **Optimized fork** of [WYH66666666/DSH-Transparent-UI-Plugin](https://github.com/WYH66666666/DSH-Transparent-UI-Plugin) (original author: **John Wu**). This repository is published on the basis of the original author's source code, with compatibility fixes applied so the Aqua glassmorphism theme works on the current DeepSeek Harness release.
+> 基于 [WYH66666666/DSH-Transparent-UI-Plugin](https://github.com/WYH66666666/DSH-Transparent-UI-Plugin) 原作者源码优化适配而来，感谢原作者的出色工作。
 
-English | [中文](README.zh.md)
+针对 **DeepSeek Harness 官方桌面端（0.2.0-rc.2）** 适配与增强的 Aqua 玻璃透明 UI 插件：
 
-Aqua is a highly customizable glassmorphism theme for the DeepSeek Harness web UI. The header, sidebar, composer, stats line, and trajectory view all become panes of frosted glass. You can put a video as wallpaper, and switch it off to restore the stock UI exactly — with no source changes to DSH itself.
+- 全界面 100% 透明（对话区 / 侧边栏 / 输入框 / 弹窗 / 账号菜单），拒绝半透明
+- 原版 Aqua 玻璃设置完整保留：**云母效果 / 兼容模式 / 流体 / 壁纸 / 流体颜色 / 深度 / 模糊 / 磨砂 / 背景亮度 / 粒子鲸鱼 / 小生物 / 网格 / 聚光灯 / 按压效果 / 壁纸与视频效果**
+- 原版设置组件已接入官方设置页：**账号（左下角猫佧）→ 设置 → 通用设置**（滚动到底部）
+- 修复官方 0.2.0 不兼容点：`IconCheckOutline16 → IconCheckOutlineRegular` 图标适配、store 契约兼容、右侧面板毛玻璃与占位处理
 
-## Why this fork
+## 安装
 
-The upstream npm package `dsh-client-ui-aqua@1.3.1` (released 2026-08-17) was built for the DSH `0.1.0-rc.x` architecture, in which the client runtime (`@deepseek-ai/dsh-client-runtime`) provided the `sessions` / `workspaces` client services. DSH `0.1.2-rc.1` (2026-09-03) refactored those services into the official controllers, and the upstream plugin's author explicitly states the plugin has not been updated to the new API yet. Installing the upstream package on `0.1.2-rc.1` therefore fails with:
-
-- `Failed to load plugins: loader fibers failed` — `@deepseek-ai/dsh-api-session-controller` / `@deepseek-ai/dsh-api-workspace-controller` (duplicate client service registration)
-- `keyed slot "settings.plugin.item" requires options.key`
-
-## Changes vs. upstream 1.3.1
-
-| File | Change |
-| --- | --- |
-| `lib/client.js` | `require("@deepseek-ai/dsh-client-runtime/client")` → `require("@deepseek-ai/dsh-client-store")` — dsh 0.1.2-rc.1 ships the store module built-in, and it exports the same `defineStore` API Aqua uses; the runtime (and its colliding service registrations) is no longer needed |
-| `lib/client.js` | `settings.plugin.item` registration now passes `key: "aqua"` (the slot is `keyed` in 0.1.2-rc.1) |
-| `package.json` | Removed `@deepseek-ai/dsh-client-runtime` from `dsh.client.inject` and `peerDependencies`; version bumped to `1.3.1-optimized.1` |
-
-**Do NOT install the runtime together with this fork.** `dsh-client-runtime` registers the same client `sessions` / `workspaces` services as the 0.1.2-rc.1 controllers, which re-introduces the `loader fibers failed` conflict. No `insert` entry for `dsh-client-runtime` should exist in the profile patch.
-
-### Known limitation
-
-The master on/off card (Settings → Plugins → Glass theme) is not dispatched on 0.1.2-rc.1, because that keyed slot only renders cards for host-served setting namespaces and Aqua is a pure client plugin. The theme is **enabled by default**; the appearance controls are available at **Settings → General → Appearance** (the `settings.general.item` list slot renders all registrants).
-
-## Installation (GitHub / local path)
-
-`dsh plugin add` pulls the upstream npm package and would overwrite these fixes, so install from this repository directly:
-
-1. Clone or download this repository.
-2. Copy the `dsh-client-ui-aqua` directory into your web profile's node_modules:
-
+1. 下载 `dsh-client-ui-aqua-1.3.1.tgz`
+2. 打开 DeepSeek Harness（若未安装 CLI 会自动处理）：
    ```
-   %DSH_HOME%\profiles\web\node_modules\dsh-client-ui-aqua
+   dsh plugin add dsh-client-ui-aqua-1.3.1.tgz
    ```
-
-3. Register the plugin row in `%DSH_HOME%\profiles\web\cordis.patch.yml`:
-
-   ```yaml
-   - insert:
-       - id: ui-aqua
-         name: 'dsh-client-ui-aqua'
+   或指定桌面配置：
    ```
+   dsh plugin --profile desktop add dsh-client-ui-aqua-1.3.1.tgz
+   ```
+3. 重启 DeepSeek Harness，完成
 
-4. Restart `dsh web` (or the desktop wrapper).
+## 设置
 
-The theme applies immediately. Toggle it off / tweak it in **Settings → General → Appearance**.
+- 点侧边栏底部账号（猫佧）→ **设置 → 通用设置**，滚动到底部即是完整的 Aqua 玻璃设置。
+- 所有设置实时生效并自动保存（localStorage `dsh.ui-aqua.*`）。
 
-## License
+## 兼容性
 
-[MIT](LICENSE) — Copyright (c) 2026 **John Wu** (original author). Modified and redistributed under the same license with the original copyright notice preserved.
+- 适配版本：DeepSeek Harness 0.2.0-rc.2（官方桌面端）
+- 依赖：`@deepseek-ai/dsh-client-store`（0.2.0 已内置）
+
+## 卸载
+
+```
+dsh plugin remove dsh-client-ui-aqua
+```
