@@ -37,3 +37,5 @@
 ```
 dsh plugin remove dsh-client-ui-aqua
 ```
+
+> 最后更新：2026-10-01（适配 DeepSeek Harness 桌面端 0.2.0-rc.2）
